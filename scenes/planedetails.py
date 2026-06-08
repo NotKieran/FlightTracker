@@ -26,9 +26,9 @@ class PlaneDetailsScene(object):
             return
 
         origin_name = (airport_data.get_airport_by_iata(self._data[self._data_index]["origin"])[0]["airport"]
-                       .replace('Airport', '').replace('International', ''))
+                       .replace(' Airport', '').replace(' International', ''))
         destination_name = (airport_data.get_airport_by_iata(self._data[self._data_index]["destination"])[0]["airport"]
-                            .replace('Airport', '').replace('International', ''))
+                            .replace(' Airport', '').replace(' International', ''))
 
         plane = f'{origin_name} -> {destination_name} - {self._data[self._data_index]["plane"]}'
 
