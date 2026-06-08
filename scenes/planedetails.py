@@ -3,6 +3,8 @@ from rgbmatrix import graphics
 from utilities.animator import Animator
 from setup import colours, fonts, screen
 
+from airports import airport_data
+
 # Setup
 PLANE_DETAILS_COLOUR = colours.PINK
 PLANE_DISTANCE_FROM_TOP = 30
@@ -23,7 +25,10 @@ class PlaneDetailsScene(object):
         if len(self._data) == 0:
             return
 
-        plane = f'{self._data[self._data_index]["plane"]}'
+        origin_name = airport_data.get_airport_by_iata(self._data[self._data_index]["origin"])[0]["airport"]
+        destination_name = airport_data.get_airport_by_iata(self._data[self._data_index]["destination"])[0]["airport"]
+
+        plane = f'{origin_name} -> {destination_name} - {self._data[self._data_index]["plane"]}'
 
         # Draw background
         self.draw_square(
