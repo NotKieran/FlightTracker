@@ -17,6 +17,7 @@ class PlaneDetailsScene(object):
         super().__init__()
         self.plane_position = screen.WIDTH
         self._data_all_looped = False
+        self.known_airport_codes = ['LHR', 'LCY', 'LTN', 'STN', 'LGW']
 
     @Animator.KeyFrame.add(1)
     def plane_details(self, count):
@@ -25,15 +26,25 @@ class PlaneDetailsScene(object):
         if len(self._data) == 0:
             return
 
-        origin_name = (airport_data.get_airport_by_iata(self._data[self._data_index]["origin"])[0]["airport"]
+        origin_iata = self._data[self._data_index]["origin"]
+        origin_name = (airport_data.get_airport_by_iata(origin_iata)[0]["airport"]
                        .replace(' Airport', '')
                        .replace(' International', ''))
 
-        destination_name = (airport_data.get_airport_by_iata(self._data[self._data_index]["destination"])[0]["airport"]
+        destination_iata = self._data[self._data_index]["destination"]
+        destination_name = (airport_data.get_airport_by_iata(destination_iata)[0]["airport"]
                             .replace(' Airport', '')
                             .replace(' International', ''))
 
-        plane = f'{origin_name} -> {destination_name} - {self._data[self._data_index]["plane"]}'
+        known_origin = origin_iata in self.known_airport_codes
+        known_destination = destination_iata in self.known_airport_codes
+
+        if known_origin and known_destination:
+            plane = f'{self._data[self._data_index]["plane"]}'
+        elif known_origin:
+            plane = f'To: {destination_name} - {self._data[self._data_index]["plane"]}'
+        elif known_destination:
+            plane = f'From: {origin_name} - {self._data[self._data_index]["plane"]}'
 
         # Draw background
         self.draw_square(
