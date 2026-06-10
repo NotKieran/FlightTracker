@@ -19,7 +19,8 @@ def airport_for_display(iata):
     name = (airport["airport"]
                .replace(' Airport', '')
                .replace(' International', ''))
-    country = pycountry.countries.get(alpha_2=airport["country_code"])
+    country_code = airport["country_code"]
+    country = pycountry.countries.get(alpha_2=country_code).name
     return f'{country}, {name}'
 
 
