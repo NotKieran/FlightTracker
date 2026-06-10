@@ -18,3 +18,4 @@ soupsieve==2.7
 typing_extensions==4.14.1
 urllib3==2.5.0
 airports-py==3.1.0
+pycountry==26.2.16

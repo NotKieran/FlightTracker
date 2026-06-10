@@ -4,12 +4,23 @@ from utilities.animator import Animator
 from setup import colours, fonts, screen
 
 from airports import airport_data
+import pycountry
 
 # Setup
 PLANE_DETAILS_COLOUR = colours.PINK
 PLANE_DISTANCE_FROM_TOP = 30
 PLANE_TEXT_HEIGHT = 9
 PLANE_FONT = fonts.regular
+
+
+def airport_for_display(iata):
+    airport = airport_data.get_airport_by_iata(iata)[0]
+
+    name = (airport["airport"]
+               .replace(' Airport', '')
+               .replace(' International', ''))
+    country = pycountry.countries.get(alpha_2=airport["country_code"])
+    return f'{country}, {name}'
 
 
 class PlaneDetailsScene(object):
@@ -27,24 +38,24 @@ class PlaneDetailsScene(object):
             return
 
         origin_iata = self._data[self._data_index]["origin"]
-        origin_name = (airport_data.get_airport_by_iata(origin_iata)[0]["airport"]
-                       .replace(' Airport', '')
-                       .replace(' International', ''))
+        origin_airport_text = airport_for_display(origin_iata)
 
         destination_iata = self._data[self._data_index]["destination"]
-        destination_name = (airport_data.get_airport_by_iata(destination_iata)[0]["airport"]
-                            .replace(' Airport', '')
-                            .replace(' International', ''))
+        destination_airport_text = airport_for_display(destination_iata)
+
 
         known_origin = origin_iata in self.known_airport_codes
         known_destination = destination_iata in self.known_airport_codes
 
+        plane_model_text = f'{self._data[self._data_index]["plane"]}'
         if known_origin and known_destination:
-            plane = f'{self._data[self._data_index]["plane"]}'
-        elif known_origin:
-            plane = f'To: {destination_name} - {self._data[self._data_index]["plane"]}'
-        elif known_destination:
-            plane = f'From: {origin_name} - {self._data[self._data_index]["plane"]}'
+            plane = plane_model_text
+        elif known_origin and not known_destination:
+            plane = f'To: {destination_airport_text} - {plane_model_text}'
+        elif known_destination and not known_origin:
+            plane = f'From: {origin_airport_text} - {plane_model_text}'
+        else:
+            plane = f'From: {origin_airport_text}, To: {destination_airport_text} - {plane_model_text}'
 
         # Draw background
         self.draw_square(
@@ -77,3 +88,4 @@ class PlaneDetailsScene(object):
     @Animator.KeyFrame.add(0)
     def reset_scrolling(self):
         self.plane_position = screen.WIDTH
+
