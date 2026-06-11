@@ -14,14 +14,20 @@ PLANE_FONT = fonts.regular
 
 
 def airport_for_display(iata):
+    if iata == "":
+        return ""
+
     airport = airport_data.get_airport_by_iata(iata)[0]
 
     name = (airport["airport"]
                .replace(' Airport', '')
                .replace(' International', ''))
     country_code = airport["country_code"]
-    country = pycountry.countries.get(alpha_2=country_code).name
-    return f'{country}, {name}'
+    if len(country_code) > 0:
+        country = pycountry.countries.get(alpha_2=country_code).name
+        return f'{country}, {name}'
+    else:
+        return f'{name}'
 
 
 class PlaneDetailsScene(object):
